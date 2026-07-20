@@ -2,10 +2,13 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"gosync/internal/config"
 	"gosync/internal/database"
+
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -37,8 +40,15 @@ func main() {
 	}
 }
 
-func startServer(db interface { /* replace with *gorm.DB */
-}) {
-	// TODO: wire up your actual server (router, listener, etc.)
-	log.Println("starting server...")
+func startServer(db *gorm.DB) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("ok"))
+	})
+
+	log.Println("starting server on :8080")
+	if err := http.ListenAndServe(":8080", mux); err != nil {
+		log.Fatalf("server error: %v", err)
+	}
 }
