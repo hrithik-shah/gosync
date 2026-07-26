@@ -11,6 +11,14 @@ import (
 	"gorm.io/gorm"
 )
 
+// @title           GoSync API
+// @version         1.0
+// @description     File sync service API.
+// @host            localhost:8080
+// @BasePath        /api/v1
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	cmd := "start"
 	if len(os.Args) > 1 {

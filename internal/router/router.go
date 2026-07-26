@@ -7,6 +7,10 @@ import (
 	chimw "github.com/go-chi/chi/v5/middleware"
 	"gorm.io/gorm"
 
+	_ "gosync/docs" // generated docs package — blank import registers the spec
+
+	httpSwagger "github.com/swaggo/http-swagger"
+
 	"gosync/internal/controller"
 	"gosync/internal/middleware"
 )
@@ -49,6 +53,8 @@ func New(db *gorm.DB) http.Handler {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("ok"))
 	})
+
+	r.Router.Get("/swagger/*", httpSwagger.WrapHandler)
 
 	userCtrl := controller.NewUserController(db)
 	authCtrl := controller.NewAuthController(db)
