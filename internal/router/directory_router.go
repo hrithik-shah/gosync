@@ -3,7 +3,9 @@ package router
 import "gosync/internal/controller"
 
 func DirectoryRoutes(r *AppRouter, dirCtrl *controller.DirectoryController) {
-	r.Get("/", dirCtrl.List)
 	r.Post("/", dirCtrl.Create)
+	r.Get("/{id}", dirCtrl.ListContents)
+	r.Patch("/{id}", dirCtrl.Update)
+	r.Post("/{id}/move", dirCtrl.Move)
 	r.Delete("/{id}", dirCtrl.Delete)
 }

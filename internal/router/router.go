@@ -54,6 +54,8 @@ func New(db *gorm.DB) http.Handler {
 	authCtrl := controller.NewAuthController(db)
 	fileCtrl := controller.NewFileController(db)
 	dirCtrl := controller.NewDirectoryController(db)
+	syncCtrl := controller.NewSyncController(db)
+	deviceCtrl := controller.NewDeviceController(db)
 
 	r.Route("/auth", func(sub *AppRouter) {
 		AuthRoutes(sub, authCtrl)
@@ -66,6 +68,8 @@ func New(db *gorm.DB) http.Handler {
 		wrappedSub.Route("/users", func(s *AppRouter) { UserRoutes(s, userCtrl) })
 		wrappedSub.Route("/files", func(s *AppRouter) { FileRoutes(s, fileCtrl) })
 		wrappedSub.Route("/directories", func(s *AppRouter) { DirectoryRoutes(s, dirCtrl) })
+		wrappedSub.Route("/sync", func(s *AppRouter) { SyncRoutes(s, syncCtrl) })
+		wrappedSub.Route("/devices", func(s *AppRouter) { DeviceRoutes(s, deviceCtrl) })
 	})
 
 	return r
