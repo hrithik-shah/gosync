@@ -57,19 +57,21 @@ func New(db *gorm.DB) http.Handler {
 	syncCtrl := controller.NewSyncController(db)
 	deviceCtrl := controller.NewDeviceController(db)
 
-	r.Route("/auth", func(sub *AppRouter) {
-		AuthRoutes(sub, authCtrl)
-	})
+	r.Route("/api/v1", func(api *AppRouter) {
+		api.Route("/auth", func(sub *AppRouter) {
+			AuthRoutes(sub, authCtrl)
+		})
 
-	r.Router.Group(func(sub chi.Router) {
-		sub.Use(middleware.RequireAuth)
+		api.Router.Group(func(sub chi.Router) {
+			sub.Use(middleware.RequireAuth)
 
-		wrappedSub := &AppRouter{sub}
-		wrappedSub.Route("/users", func(s *AppRouter) { UserRoutes(s, userCtrl) })
-		wrappedSub.Route("/files", func(s *AppRouter) { FileRoutes(s, fileCtrl) })
-		wrappedSub.Route("/directories", func(s *AppRouter) { DirectoryRoutes(s, dirCtrl) })
-		wrappedSub.Route("/sync", func(s *AppRouter) { SyncRoutes(s, syncCtrl) })
-		wrappedSub.Route("/devices", func(s *AppRouter) { DeviceRoutes(s, deviceCtrl) })
+			wrappedSub := &AppRouter{sub}
+			wrappedSub.Route("/users", func(s *AppRouter) { UserRoutes(s, userCtrl) })
+			wrappedSub.Route("/files", func(s *AppRouter) { FileRoutes(s, fileCtrl) })
+			wrappedSub.Route("/directories", func(s *AppRouter) { DirectoryRoutes(s, dirCtrl) })
+			wrappedSub.Route("/sync", func(s *AppRouter) { SyncRoutes(s, syncCtrl) })
+			wrappedSub.Route("/devices", func(s *AppRouter) { DeviceRoutes(s, deviceCtrl) })
+		})
 	})
 
 	return r
