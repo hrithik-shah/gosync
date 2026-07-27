@@ -10,6 +10,8 @@ import (
 	"github.com/google/uuid"
 
 	"gosync/internal/api/apperror"
+	"gosync/internal/api/dto"
+	"gosync/internal/api/httputil"
 	"gosync/internal/api/middleware"
 	"gosync/internal/api/service"
 
@@ -95,10 +97,6 @@ func (c *FileController) GetMetadata(w http.ResponseWriter, r *http.Request) err
 	return json.NewEncoder(w).Encode(metadata)
 }
 
-type updateFileRequest struct {
-	Name string `json:"name"`
-}
-
 // Update handles PATCH /{id} — renames a file.
 // Update godoc
 // @Description  Rename a file
@@ -106,7 +104,7 @@ type updateFileRequest struct {
 // @Tags         files
 // @Accept       json
 // @Param        id    	path  string             true  "File ID"
-// @Param        body  	body  updateFileRequest  true  "New file name"
+// @Param        body  	body  dto.UpdateFileRequest  true  "New file name"
 // @Success      200
 // @Failure      400  {object}  map[string]string
 // @Failure      404  {object}  map[string]string
@@ -123,15 +121,12 @@ func (c *FileController) Update(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	var req updateFileRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		return apperror.BadRequest("invalid request body")
-	}
-	if req.Name == "" {
-		return apperror.BadRequest("name is required")
+	var req dto.UpdateFileRequest
+	if err := httputil.DecodeAndValidate(r, &req); err != nil {
+		return err
 	}
 
-	if err = c.fileService.Update(userID, fileID, req.Name); err != nil {
+	if err := c.fileService.Update(userID, fileID, req.Name); err != nil {
 		return err
 	}
 
@@ -149,7 +144,7 @@ type moveFileRequest struct {
 // @Tags         files
 // @Accept       json
 // @Param        id    	path  string             true  "File ID"
-// @Param        body  	body  moveFileRequest  true  "New directory ID"
+// @Param        body  	body  dto.MoveFileRequest  true  "New directory ID"
 // @Success      200
 // @Failure      400  {object}  map[string]string
 // @Failure      404  {object}  map[string]string
@@ -166,7 +161,7 @@ func (c *FileController) Move(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	var req moveFileRequest
+	var req dto.MoveFileRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return apperror.BadRequest("invalid request body")
 	}
@@ -263,7 +258,7 @@ func (c *FileController) UploadNewFileContent(w http.ResponseWriter, r *http.Req
 // @Tags         files
 // @Produce      octet-stream
 // @Param        id    path      string  true  "Target file ID"
-// @Success      200  {object}  binary  "Raw file content"
+// @Success      200  {string}  binary  "Raw file content"
 // @Failure      400  {object}  map[string]string
 // @Failure      404  {object}  map[string]string
 // @Security     BearerAuth
@@ -297,7 +292,7 @@ func (c *FileController) GetFileContent(w http.ResponseWriter, r *http.Request) 
 // @Produce      octet-stream
 // @Param        id      path      string  true  "Target file ID"
 // @Param        version path      int     true  "Version number"
-// @Success      200     {object}  binary  "Raw file content"
+// @Success      200     {string}  binary  "Raw file content"
 // @Failure      400     {object}  map[string]string
 // @Failure      404     {object}  map[string]string
 // @Security     BearerAuth
