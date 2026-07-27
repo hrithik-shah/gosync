@@ -1,6 +1,7 @@
 package config
 
 import (
+	"gosync/internal/api/utils/timeutil"
 	"os"
 	"time"
 
@@ -54,18 +55,18 @@ func Load() error {
 	}
 
 	if v := os.Getenv("ACCESS_TOKEN_TIMEOUT"); v != "" {
-		d, err := time.ParseDuration(v)
+		d, err := timeutil.ParseDuration(v)
 		if err != nil {
 			return err
 		}
 		globalCfg.accessTokenTimeout = d
 	}
 	if v := os.Getenv("REFRESH_TOKEN_TIMEOUT"); v != "" {
-		d, err := time.ParseDuration(v)
+		d, err := timeutil.ParseDuration(v)
 		if err != nil {
 			return err
 		}
-		globalCfg.accessTokenTimeout = d
+		globalCfg.refreshTokenTimeout = d
 	}
 	if v := os.Getenv("JWT_SECRET"); v != "" {
 		globalCfg.jwtSecret = v
