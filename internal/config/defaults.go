@@ -1,13 +1,16 @@
 package config
 
 var Defaults = Config{
-	Port:        "8080",
-	Environment: "development",
-	LogLevel:    "info",
+	port:        "8080",
+	environment: "development",
+	logLevel:    "info",
 
-	POSTGRES_HOST:    "localhost",
-	POSTGRES_PORT:    "5432",
-	POSTGRES_USER:    "postgres",
-	POSTGRES_DB:      "app",
-	POSTGRES_SSLMODE: "disable",
+	accessTokenTimeout:  "15s",
+	refreshTokenTimeout: "14d",
+
+	postgresHost:    "localhost",
+	postgresPort:    "5432",
+	postgresUser:    "postgres",
+	postgresDb:      "app",
+	postgresSslmode: "disable",
 }

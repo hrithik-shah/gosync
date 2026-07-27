@@ -25,12 +25,12 @@ func main() {
 		cmd = os.Args[1]
 	}
 
-	cfg, err := config.Load()
+	err := config.Load()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	db, err := database.Connect(*cfg)
+	db, err := database.Connect()
 	if err != nil {
 		log.Fatal(err)
 	}
