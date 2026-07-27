@@ -84,7 +84,7 @@ func (c *FileController) GetMetadata(w http.ResponseWriter, r *http.Request) err
 		return apperror.Unauthorized("not authenticated")
 	}
 
-	fileID, err := parseUUIDParam(r, "id")
+	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
 		return err
 	}
@@ -116,7 +116,7 @@ func (c *FileController) Update(w http.ResponseWriter, r *http.Request) error {
 		return apperror.Unauthorized("not authenticated")
 	}
 
-	fileID, err := parseUUIDParam(r, "id")
+	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
 		return err
 	}
@@ -156,7 +156,7 @@ func (c *FileController) Move(w http.ResponseWriter, r *http.Request) error {
 		return apperror.Unauthorized("not authenticated")
 	}
 
-	fileID, err := parseUUIDParam(r, "id")
+	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
 		return err
 	}
@@ -196,7 +196,7 @@ func (c *FileController) Delete(w http.ResponseWriter, r *http.Request) error {
 		return apperror.Unauthorized("not authenticated")
 	}
 
-	fileID, err := parseUUIDParam(r, "id")
+	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
 		return err
 	}
@@ -226,7 +226,7 @@ func (c *FileController) UploadNewFileContent(w http.ResponseWriter, r *http.Req
 		return apperror.Unauthorized("not authenticated")
 	}
 
-	fileID, err := parseUUIDParam(r, "id")
+	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
 		return err
 	}
@@ -269,7 +269,7 @@ func (c *FileController) GetFileContent(w http.ResponseWriter, r *http.Request) 
 		return apperror.Unauthorized("not authenticated")
 	}
 
-	fileID, err := parseUUIDParam(r, "id")
+	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
 		return err
 	}
@@ -303,7 +303,7 @@ func (c *FileController) GetFileVersion(w http.ResponseWriter, r *http.Request) 
 		return apperror.Unauthorized("not authenticated")
 	}
 
-	fileID, err := parseUUIDParam(r, "id")
+	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
 		return err
 	}
@@ -342,7 +342,7 @@ func (c *FileController) ListFileVersions(w http.ResponseWriter, r *http.Request
 		return apperror.Unauthorized("not authenticated")
 	}
 
-	fileID, err := parseUUIDParam(r, "id")
+	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
 		return err
 	}
@@ -353,14 +353,4 @@ func (c *FileController) ListFileVersions(w http.ResponseWriter, r *http.Request
 	}
 
 	return json.NewEncoder(w).Encode(versions)
-}
-
-// private method parseUUIDParam parses a chi URL param as a UUID, returning
-// a BadRequest apperror if it's not valid.
-func parseUUIDParam(r *http.Request, name string) (uuid.UUID, error) {
-	id, err := uuid.Parse(chi.URLParam(r, name))
-	if err != nil {
-		return uuid.Nil, apperror.BadRequest("invalid " + name)
-	}
-	return id, nil
 }
