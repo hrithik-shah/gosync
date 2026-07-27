@@ -42,7 +42,7 @@ func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) error 
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	return json.NewEncoder(w).Encode(dto.RegisterResponse{ID: id.String()})
+	return json.NewEncoder(w).Encode(dto.RegisterResponse{UserID: id.String()})
 }
 
 // Login godoc

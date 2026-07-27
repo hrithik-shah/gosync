@@ -6,10 +6,6 @@ type RegisterRequest struct {
 	Name     string `json:"name" validate:"required,min=1,max=255"`
 }
 
-type RegisterResponse struct {
-	ID string `json:"id"`
-}
-
 type LoginRequest struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
@@ -17,6 +13,10 @@ type LoginRequest struct {
 
 type RefreshRequest struct {
 	RefreshToken string `json:"refresh_token" validate:"required"`
+}
+
+type RegisterResponse struct {
+	UserID string `json:"id"`
 }
 
 type AuthResponse struct {
