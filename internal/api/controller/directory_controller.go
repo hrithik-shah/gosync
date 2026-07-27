@@ -109,7 +109,7 @@ func (c *DirectoryController) ListContents(w http.ResponseWriter, r *http.Reques
 	}
 
 	response := payload.ListDirectoryContentsResponse{
-		Files: payload.FromDTOSlice(files),
+		Files: payload.FromFileDTOSlice(files),
 	}
 
 	return json.NewEncoder(w).Encode(response)

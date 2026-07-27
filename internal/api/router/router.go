@@ -56,7 +56,7 @@ func New(db *gorm.DB) http.Handler {
 
 	r.Router.Get("/swagger/*", httpSwagger.WrapHandler)
 
-	userCtrl := controller.NewUserController()
+	// userCtrl := controller.NewUserController() TODO
 	authCtrl := controller.NewAuthController()
 	fileCtrl := controller.NewFileController()
 	dirCtrl := controller.NewDirectoryController()
@@ -72,7 +72,7 @@ func New(db *gorm.DB) http.Handler {
 			sub.Use(middleware.RequireAuth)
 
 			wrappedSub := &AppRouter{sub}
-			wrappedSub.Route("/users", func(s *AppRouter) { UserRoutes(s, userCtrl) })
+			// wrappedSub.Route("/users", func(s *AppRouter) { UserRoutes(s, userCtrl) }) TODO
 			wrappedSub.Route("/files", func(s *AppRouter) { FileRoutes(s, fileCtrl) })
 			wrappedSub.Route("/directories", func(s *AppRouter) { DirectoryRoutes(s, dirCtrl) })
 			wrappedSub.Route("/sync", func(s *AppRouter) { SyncRoutes(s, syncCtrl) })
