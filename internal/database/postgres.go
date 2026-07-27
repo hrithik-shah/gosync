@@ -10,10 +10,12 @@ import (
 	"gosync/internal/models"
 )
 
-func Connect(cfg config.Config) (*gorm.DB, error) {
+func Connect() (*gorm.DB, error) {
+	cfg := config.Get()
+
 	dsn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		cfg.POSTGRES_HOST, cfg.POSTGRES_PORT, cfg.POSTGRES_USER, cfg.POSTGRES_PASSWORD, cfg.POSTGRES_DB, cfg.POSTGRES_SSLMODE,
+		cfg.PostgresHost(), cfg.PostgresPort(), cfg.PostgresUser(), cfg.PostgresPassword(), cfg.PostgresDb(), cfg.PostgresSslmode(),
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})

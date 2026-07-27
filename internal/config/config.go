@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -11,8 +12,8 @@ type Config struct {
 	environment string
 	logLevel    string
 
-	accessTokenTimeout  string
-	refreshTokenTimeout string
+	accessTokenTimeout  time.Duration
+	refreshTokenTimeout time.Duration
 	jwtSecret           string
 
 	postgresHost     string
@@ -27,9 +28,9 @@ func (c *Config) Port() string        { return c.port }
 func (c *Config) Environment() string { return c.environment }
 func (c *Config) LogLevel() string    { return c.logLevel }
 
-func (c *Config) AccessTokenTimeout() string  { return c.accessTokenTimeout }
-func (c *Config) RefreshTokenTimeout() string { return c.refreshTokenTimeout }
-func (c *Config) JWTSecret() string           { return c.jwtSecret }
+func (c *Config) AccessTokenTimeout() time.Duration  { return c.accessTokenTimeout }
+func (c *Config) RefreshTokenTimeout() time.Duration { return c.refreshTokenTimeout }
+func (c *Config) JWTSecret() string                  { return c.jwtSecret }
 
 func (c *Config) PostgresHost() string     { return c.postgresHost }
 func (c *Config) PostgresPort() string     { return c.postgresPort }
@@ -53,10 +54,18 @@ func Load() error {
 	}
 
 	if v := os.Getenv("ACCESS_TOKEN_TIMEOUT"); v != "" {
-		globalCfg.accessTokenTimeout = v
+		d, err := time.ParseDuration(v)
+		if err != nil {
+			return err
+		}
+		globalCfg.accessTokenTimeout = d
 	}
 	if v := os.Getenv("REFRESH_TOKEN_TIMEOUT"); v != "" {
-		globalCfg.refreshTokenTimeout = v
+		d, err := time.ParseDuration(v)
+		if err != nil {
+			return err
+		}
+		globalCfg.accessTokenTimeout = d
 	}
 	if v := os.Getenv("JWT_SECRET"); v != "" {
 		globalCfg.jwtSecret = v
