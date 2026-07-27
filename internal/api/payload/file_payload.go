@@ -16,15 +16,15 @@ type MoveFileRequest struct {
 	NewParentDirectoryID string `json:"directory_id" validate:"required,uuid"`
 }
 
-func FromDTO(file dto.FileDTO) FileInfo {
+func FromFileDTO(file dto.FileDTO) FileInfo {
 	return FileInfo{ID: file.ID, Name: file.Name, DirectoryID: file.DirectoryID}
 }
 
-func FromDTOSlice(files []dto.FileDTO) []FileInfo {
+func FromFileDTOSlice(files []dto.FileDTO) []FileInfo {
 	result := make([]FileInfo, len(files))
 
 	for i, file := range files {
-		result[i] = FromDTO(file)
+		result[i] = FromFileDTO(file)
 	}
 
 	return result

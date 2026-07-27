@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"gosync/internal/api/router"
 	"gosync/internal/config"
 	"gosync/internal/database"
 
@@ -49,14 +50,10 @@ func main() {
 }
 
 func startServer(db *gorm.DB) {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("ok"))
-	})
+	r := router.New(db)
 
 	log.Println("starting server on :8080")
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	if err := http.ListenAndServe(":8080", r); err != nil {
 		log.Fatalf("server error: %v", err)
 	}
 }

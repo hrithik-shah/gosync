@@ -13,8 +13,12 @@ type User struct {
 	PasswordHash string    `gorm:"not null"`
 	Role         string    `gorm:"not null;default:'USER'"`
 
+	rootDirectoryID uuid.UUID `gorm:"type:uuid;not null"`
+
 	CreatedAt time.Time
 	UpdatedAt time.Time
+
+	rootDirectory *Directory `gorm:"foreignKey:rootDirectoryID"`
 
 	Devices     []Device
 	Directories []Directory

@@ -4,5 +4,6 @@ import "gosync/internal/api/controller"
 
 func DeviceRoutes(r *AppRouter, deviceCtrl *controller.DeviceController) {
 	r.Post("/", deviceCtrl.Create)
-	r.Get("/", deviceCtrl.List)
+	r.Get("/list", deviceCtrl.List)
+	r.Get("/{id}", deviceCtrl.Get)
 }
