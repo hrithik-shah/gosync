@@ -11,9 +11,9 @@ import (
 
 	"gosync/internal/api/apperror"
 	"gosync/internal/api/dto"
-	"gosync/internal/api/httputil"
 	"gosync/internal/api/middleware"
 	"gosync/internal/api/service"
+	"gosync/internal/api/utils/httputil"
 
 	"gosync/internal/config"
 )
