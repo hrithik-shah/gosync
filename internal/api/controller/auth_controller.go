@@ -6,10 +6,10 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"gosync/internal/apperror"
-	"gosync/internal/middleware"
+	"gosync/internal/api/apperror"
+	"gosync/internal/api/middleware"
+	"gosync/internal/api/service"
 	"gosync/internal/models"
-	"gosync/internal/service"
 )
 
 type AuthController struct {

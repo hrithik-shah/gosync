@@ -9,9 +9,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
-	"gosync/internal/apperror"
-	"gosync/internal/middleware"
-	"gosync/internal/service"
+	"gosync/internal/api/apperror"
+	"gosync/internal/api/middleware"
+	"gosync/internal/api/service"
 
 	"gosync/internal/config"
 )

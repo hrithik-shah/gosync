@@ -1,6 +1,6 @@
 package router
 
-import "gosync/internal/controller"
+import "gosync/internal/api/controller"
 
 func DeviceRoutes(r *AppRouter, deviceCtrl *controller.DeviceController) {
 	r.Post("/", deviceCtrl.Create)

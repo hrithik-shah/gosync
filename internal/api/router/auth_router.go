@@ -1,8 +1,8 @@
 package router
 
 import (
-	"gosync/internal/controller"
-	"gosync/internal/middleware"
+	"gosync/internal/api/controller"
+	"gosync/internal/api/middleware"
 
 	"github.com/go-chi/chi/v5"
 )

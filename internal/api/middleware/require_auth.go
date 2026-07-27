@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"gosync/internal/apperror"
+	"gosync/internal/api/apperror"
 )
 
 type ctxKey int

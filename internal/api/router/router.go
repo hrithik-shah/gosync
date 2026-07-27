@@ -11,8 +11,8 @@ import (
 
 	httpSwagger "github.com/swaggo/http-swagger"
 
-	"gosync/internal/controller"
-	"gosync/internal/middleware"
+	"gosync/internal/api/controller"
+	"gosync/internal/api/middleware"
 )
 
 type AppRouter struct {

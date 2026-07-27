@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"gosync/internal/apperror"
+	"gosync/internal/api/apperror"
 )
 
 // HandlerFunc is like http.HandlerFunc but can return an error.
