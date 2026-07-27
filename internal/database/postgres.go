@@ -32,5 +32,6 @@ func Migrate(db *gorm.DB) error {
 		&models.File{},
 		&models.FileVersion{},
 		&models.SyncEvent{},
+		&models.RefreshToken{},
 	)
 }
