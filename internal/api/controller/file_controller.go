@@ -22,8 +22,8 @@ type FileController struct {
 	fileService *service.FileService
 }
 
-func NewFileController(fileService *service.FileService) *FileController {
-	return &FileController{fileService: fileService}
+func NewFileController() *FileController {
+	return &FileController{fileService: service.NewFileService()}
 }
 
 // Upload godoc
@@ -134,10 +134,6 @@ func (c *FileController) Update(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-type moveFileRequest struct {
-	NewDirectoryID string `json:"directory_id"`
-}
-
 // Move godoc
 // @Description  Move a file to a different directory
 // @Summary      Moves a file to a different directory. Both file and target directory must be owned by the authenticated user.
@@ -166,7 +162,7 @@ func (c *FileController) Move(w http.ResponseWriter, r *http.Request) error {
 		return apperror.BadRequest("invalid request body")
 	}
 
-	newDirID, err := uuid.Parse(req.NewDirectoryID)
+	newDirID, err := uuid.Parse(req.NewParentDirectoryID)
 	if err != nil {
 		return apperror.BadRequest("invalid directory_id")
 	}

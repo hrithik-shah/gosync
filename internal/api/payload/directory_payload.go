@@ -11,6 +11,14 @@ type CreateDirectoryRequest struct {
 	ParentDirectoryID *string `json:"parent_directory_id" validate:"required,uuid"`
 }
 
+type UpdateDirectoryRequest struct {
+	NewName string `json:"name" validate:"required,min=1"`
+}
+
+type MoveDirectoryRequest struct {
+	NewParentDirectoryID string `json:"parent_directory_id" validate:"required,uuid"`
+}
+
 type CreateDirectoryResponse struct {
 	DirectoryID string `json:"id"`
 }

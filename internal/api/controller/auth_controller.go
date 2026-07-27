@@ -15,8 +15,8 @@ type AuthController struct {
 	authService *service.AuthService
 }
 
-func NewAuthController(authService *service.AuthService) *AuthController {
-	return &AuthController{authService: authService}
+func NewAuthController() *AuthController {
+	return &AuthController{authService: service.NewAuthService()}
 }
 
 // Register godoc

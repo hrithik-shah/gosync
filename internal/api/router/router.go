@@ -56,12 +56,12 @@ func New(db *gorm.DB) http.Handler {
 
 	r.Router.Get("/swagger/*", httpSwagger.WrapHandler)
 
-	userCtrl := controller.NewUserController(db)
-	authCtrl := controller.NewAuthController(db)
-	fileCtrl := controller.NewFileController(db)
-	dirCtrl := controller.NewDirectoryController(db)
-	syncCtrl := controller.NewSyncController(db)
-	deviceCtrl := controller.NewDeviceController(db)
+	userCtrl := controller.NewUserController()
+	authCtrl := controller.NewAuthController()
+	fileCtrl := controller.NewFileController()
+	dirCtrl := controller.NewDirectoryController()
+	syncCtrl := controller.NewSyncController()
+	deviceCtrl := controller.NewDeviceController()
 
 	r.Route("/api/v1", func(api *AppRouter) {
 		api.Route("/auth", func(sub *AppRouter) {
