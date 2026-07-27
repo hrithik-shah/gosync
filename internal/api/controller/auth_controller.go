@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"gosync/internal/api/apperror"
-	"gosync/internal/api/dto"
 	"gosync/internal/api/middleware"
+	"gosync/internal/api/payload"
 	"gosync/internal/api/utils/httputil"
 	"gosync/internal/service"
 )
@@ -25,13 +25,13 @@ func NewAuthController(authService *service.AuthService) *AuthController {
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        body  body      dto.RegisterRequest  true  "Registration details"
-// @Success      201   {object}  dto.RegisterResponse
+// @Param        body  body      payload.RegisterRequest  true  "Registration details"
+// @Success      201   {object}  payload.RegisterResponse
 // @Failure      400   {object}  map[string]string
 // @Failure      409   {object}  map[string]string
 // @Router       /auth/register [post]
 func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) error {
-	var req dto.RegisterRequest
+	var req payload.RegisterRequest
 	if err := httputil.DecodeAndValidate(r, &req); err != nil {
 		return err
 	}
@@ -42,7 +42,7 @@ func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) error 
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	return json.NewEncoder(w).Encode(dto.RegisterResponse{UserID: id.String()})
+	return json.NewEncoder(w).Encode(payload.RegisterResponse{UserID: id.String()})
 }
 
 // Login godoc
@@ -51,13 +51,13 @@ func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) error 
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        body  body      dto.LoginRequest  true  "Login credentials"
-// @Success      200   {object}  dto.AuthResponse
+// @Param        body  body      payload.LoginRequest  true  "Login credentials"
+// @Success      200   {object}  payload.AuthResponse
 // @Failure      400   {object}  map[string]string
 // @Failure      401   {object}  map[string]string
 // @Router       /auth/login [post]
 func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) error {
-	var req dto.LoginRequest
+	var req payload.LoginRequest
 	if err := httputil.DecodeAndValidate(r, &req); err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return json.NewEncoder(w).Encode(dto.AuthResponse{
+	return json.NewEncoder(w).Encode(payload.AuthResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	})
@@ -79,13 +79,13 @@ func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) error {
 // // @Tags         auth
 // // @Accept       json
 // // @Produce      json
-// // @Param        body  body      dto.RefreshRequest  true  "Refresh token"
-// // @Success      200   {object}  dto.AuthResponse
+// // @Param        body  body      payload.RefreshRequest  true  "Refresh token"
+// // @Success      200   {object}  payload.AuthResponse
 // // @Failure      400   {object}  map[string]string
 // // @Failure      401   {object}  map[string]string
 // // @Router       /auth/refresh [post]
 // func (c *AuthController) Refresh(w http.ResponseWriter, r *http.Request) error {
-// 	var req dto.RefreshRequest
+// 	var req payload.RefreshRequest
 // 	if err := httputil.DecodeAndValidate(r, &req); err != nil {
 // 		return err
 // 	}
@@ -95,7 +95,7 @@ func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) error {
 // 		return err
 // 	}
 
-// 	return json.NewEncoder(w).Encode(dto.AuthResponse{
+// 	return json.NewEncoder(w).Encode(payload.AuthResponse{
 // 		AccessToken:  accessToken,
 // 		RefreshToken: refreshToken,
 // 	})

@@ -10,8 +10,8 @@ import (
 	"github.com/google/uuid"
 
 	"gosync/internal/api/apperror"
-	"gosync/internal/api/dto"
 	"gosync/internal/api/middleware"
+	"gosync/internal/api/payload"
 	"gosync/internal/api/service"
 	"gosync/internal/api/utils/httputil"
 
@@ -104,7 +104,7 @@ func (c *FileController) GetMetadata(w http.ResponseWriter, r *http.Request) err
 // @Tags         files
 // @Accept       json
 // @Param        id    	path  string             true  "File ID"
-// @Param        body  	body  dto.UpdateFileRequest  true  "New file name"
+// @Param        body  	body  payload.UpdateFileRequest  true  "New file name"
 // @Success      200
 // @Failure      400  {object}  map[string]string
 // @Failure      404  {object}  map[string]string
@@ -121,7 +121,7 @@ func (c *FileController) Update(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	var req dto.UpdateFileRequest
+	var req payload.UpdateFileRequest
 	if err := httputil.DecodeAndValidate(r, &req); err != nil {
 		return err
 	}
@@ -144,7 +144,7 @@ type moveFileRequest struct {
 // @Tags         files
 // @Accept       json
 // @Param        id    	path  string             true  "File ID"
-// @Param        body  	body  dto.MoveFileRequest  true  "New directory ID"
+// @Param        body  	body  payload.MoveFileRequest  true  "New directory ID"
 // @Success      200
 // @Failure      400  {object}  map[string]string
 // @Failure      404  {object}  map[string]string
@@ -161,7 +161,7 @@ func (c *FileController) Move(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	var req dto.MoveFileRequest
+	var req payload.MoveFileRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return apperror.BadRequest("invalid request body")
 	}
