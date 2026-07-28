@@ -37,20 +37,7 @@ func newRefreshToken(db *gorm.DB, opts ...gen.DOOption) refreshToken {
 		db: db.Session(&gorm.Session{}),
 
 		RelationField: field.NewRelation("User", "models.User"),
-		Devices: struct {
-			field.RelationField
-			User struct {
-				field.RelationField
-			}
-		}{
-			RelationField: field.NewRelation("User.Devices", "models.Device"),
-			User: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("User.Devices.User", "models.User"),
-			},
-		},
-		Directories: struct {
+		RootDirectory: struct {
 			field.RelationField
 			User struct {
 				field.RelationField
@@ -80,21 +67,21 @@ func newRefreshToken(db *gorm.DB, opts ...gen.DOOption) refreshToken {
 				}
 			}
 		}{
-			RelationField: field.NewRelation("User.Directories", "models.Directory"),
+			RelationField: field.NewRelation("User.RootDirectory", "models.Directory"),
 			User: struct {
 				field.RelationField
 			}{
-				RelationField: field.NewRelation("User.Directories.User", "models.User"),
+				RelationField: field.NewRelation("User.RootDirectory.User", "models.User"),
 			},
 			Parent: struct {
 				field.RelationField
 			}{
-				RelationField: field.NewRelation("User.Directories.Parent", "models.Directory"),
+				RelationField: field.NewRelation("User.RootDirectory.Parent", "models.Directory"),
 			},
 			Children: struct {
 				field.RelationField
 			}{
-				RelationField: field.NewRelation("User.Directories.Children", "models.Directory"),
+				RelationField: field.NewRelation("User.RootDirectory.Children", "models.Directory"),
 			},
 			Files: struct {
 				field.RelationField
@@ -114,16 +101,16 @@ func newRefreshToken(db *gorm.DB, opts ...gen.DOOption) refreshToken {
 					field.RelationField
 				}
 			}{
-				RelationField: field.NewRelation("User.Directories.Files", "models.File"),
+				RelationField: field.NewRelation("User.RootDirectory.Files", "models.File"),
 				User: struct {
 					field.RelationField
 				}{
-					RelationField: field.NewRelation("User.Directories.Files.User", "models.User"),
+					RelationField: field.NewRelation("User.RootDirectory.Files.User", "models.User"),
 				},
 				Directory: struct {
 					field.RelationField
 				}{
-					RelationField: field.NewRelation("User.Directories.Files.Directory", "models.Directory"),
+					RelationField: field.NewRelation("User.RootDirectory.Files.Directory", "models.Directory"),
 				},
 				CurrentVersion: struct {
 					field.RelationField
@@ -131,19 +118,37 @@ func newRefreshToken(db *gorm.DB, opts ...gen.DOOption) refreshToken {
 						field.RelationField
 					}
 				}{
-					RelationField: field.NewRelation("User.Directories.Files.CurrentVersion", "models.FileVersion"),
+					RelationField: field.NewRelation("User.RootDirectory.Files.CurrentVersion", "models.FileVersion"),
 					File: struct {
 						field.RelationField
 					}{
-						RelationField: field.NewRelation("User.Directories.Files.CurrentVersion.File", "models.File"),
+						RelationField: field.NewRelation("User.RootDirectory.Files.CurrentVersion.File", "models.File"),
 					},
 				},
 				Versions: struct {
 					field.RelationField
 				}{
-					RelationField: field.NewRelation("User.Directories.Files.Versions", "models.FileVersion"),
+					RelationField: field.NewRelation("User.RootDirectory.Files.Versions", "models.FileVersion"),
 				},
 			},
+		},
+		Devices: struct {
+			field.RelationField
+			User struct {
+				field.RelationField
+			}
+		}{
+			RelationField: field.NewRelation("User.Devices", "models.Device"),
+			User: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("User.Devices.User", "models.User"),
+			},
+		},
+		Directories: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("User.Directories", "models.Directory"),
 		},
 		Files: struct {
 			field.RelationField
@@ -155,20 +160,28 @@ func newRefreshToken(db *gorm.DB, opts ...gen.DOOption) refreshToken {
 			User struct {
 				field.RelationField
 			}
-			Device struct {
+			File struct {
+				field.RelationField
+			}
+			Directory struct {
 				field.RelationField
 			}
 		}{
-			RelationField: field.NewRelation("User.Events", "models.SyncEvent"),
+			RelationField: field.NewRelation("User.Events", "models.Event"),
 			User: struct {
 				field.RelationField
 			}{
 				RelationField: field.NewRelation("User.Events.User", "models.User"),
 			},
-			Device: struct {
+			File: struct {
 				field.RelationField
 			}{
-				RelationField: field.NewRelation("User.Events.Device", "models.Device"),
+				RelationField: field.NewRelation("User.Events.File", "models.File"),
+			},
+			Directory: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("User.Events.Directory", "models.Directory"),
 			},
 		},
 	}
@@ -264,13 +277,7 @@ type refreshTokenBelongsToUser struct {
 
 	field.RelationField
 
-	Devices struct {
-		field.RelationField
-		User struct {
-			field.RelationField
-		}
-	}
-	Directories struct {
+	RootDirectory struct {
 		field.RelationField
 		User struct {
 			field.RelationField
@@ -300,6 +307,15 @@ type refreshTokenBelongsToUser struct {
 			}
 		}
 	}
+	Devices struct {
+		field.RelationField
+		User struct {
+			field.RelationField
+		}
+	}
+	Directories struct {
+		field.RelationField
+	}
 	Files struct {
 		field.RelationField
 	}
@@ -308,7 +324,10 @@ type refreshTokenBelongsToUser struct {
 		User struct {
 			field.RelationField
 		}
-		Device struct {
+		File struct {
+			field.RelationField
+		}
+		Directory struct {
 			field.RelationField
 		}
 	}

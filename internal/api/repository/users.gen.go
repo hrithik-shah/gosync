@@ -32,6 +32,7 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	_user.Email = field.NewString(tableName, "email")
 	_user.PasswordHash = field.NewString(tableName, "password_hash")
 	_user.Role = field.NewString(tableName, "role")
+	_user.RootDirectoryID = field.NewField(tableName, "root_directory_id")
 	_user.CreatedAt = field.NewTime(tableName, "created_at")
 	_user.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_user.Devices = userHasManyDevices{
@@ -40,10 +41,7 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 		RelationField: field.NewRelation("Devices", "models.Device"),
 		User: struct {
 			field.RelationField
-			Devices struct {
-				field.RelationField
-			}
-			Directories struct {
+			RootDirectory struct {
 				field.RelationField
 				User struct {
 					field.RelationField
@@ -72,6 +70,12 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 						field.RelationField
 					}
 				}
+			}
+			Devices struct {
+				field.RelationField
+			}
+			Directories struct {
+				field.RelationField
 			}
 			Files struct {
 				field.RelationField
@@ -81,18 +85,16 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 				User struct {
 					field.RelationField
 				}
-				Device struct {
+				File struct {
+					field.RelationField
+				}
+				Directory struct {
 					field.RelationField
 				}
 			}
 		}{
 			RelationField: field.NewRelation("Devices.User", "models.User"),
-			Devices: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("Devices.User.Devices", "models.Device"),
-			},
-			Directories: struct {
+			RootDirectory: struct {
 				field.RelationField
 				User struct {
 					field.RelationField
@@ -122,21 +124,21 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 					}
 				}
 			}{
-				RelationField: field.NewRelation("Devices.User.Directories", "models.Directory"),
+				RelationField: field.NewRelation("Devices.User.RootDirectory", "models.Directory"),
 				User: struct {
 					field.RelationField
 				}{
-					RelationField: field.NewRelation("Devices.User.Directories.User", "models.User"),
+					RelationField: field.NewRelation("Devices.User.RootDirectory.User", "models.User"),
 				},
 				Parent: struct {
 					field.RelationField
 				}{
-					RelationField: field.NewRelation("Devices.User.Directories.Parent", "models.Directory"),
+					RelationField: field.NewRelation("Devices.User.RootDirectory.Parent", "models.Directory"),
 				},
 				Children: struct {
 					field.RelationField
 				}{
-					RelationField: field.NewRelation("Devices.User.Directories.Children", "models.Directory"),
+					RelationField: field.NewRelation("Devices.User.RootDirectory.Children", "models.Directory"),
 				},
 				Files: struct {
 					field.RelationField
@@ -156,16 +158,16 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 						field.RelationField
 					}
 				}{
-					RelationField: field.NewRelation("Devices.User.Directories.Files", "models.File"),
+					RelationField: field.NewRelation("Devices.User.RootDirectory.Files", "models.File"),
 					User: struct {
 						field.RelationField
 					}{
-						RelationField: field.NewRelation("Devices.User.Directories.Files.User", "models.User"),
+						RelationField: field.NewRelation("Devices.User.RootDirectory.Files.User", "models.User"),
 					},
 					Directory: struct {
 						field.RelationField
 					}{
-						RelationField: field.NewRelation("Devices.User.Directories.Files.Directory", "models.Directory"),
+						RelationField: field.NewRelation("Devices.User.RootDirectory.Files.Directory", "models.Directory"),
 					},
 					CurrentVersion: struct {
 						field.RelationField
@@ -173,19 +175,29 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 							field.RelationField
 						}
 					}{
-						RelationField: field.NewRelation("Devices.User.Directories.Files.CurrentVersion", "models.FileVersion"),
+						RelationField: field.NewRelation("Devices.User.RootDirectory.Files.CurrentVersion", "models.FileVersion"),
 						File: struct {
 							field.RelationField
 						}{
-							RelationField: field.NewRelation("Devices.User.Directories.Files.CurrentVersion.File", "models.File"),
+							RelationField: field.NewRelation("Devices.User.RootDirectory.Files.CurrentVersion.File", "models.File"),
 						},
 					},
 					Versions: struct {
 						field.RelationField
 					}{
-						RelationField: field.NewRelation("Devices.User.Directories.Files.Versions", "models.FileVersion"),
+						RelationField: field.NewRelation("Devices.User.RootDirectory.Files.Versions", "models.FileVersion"),
 					},
 				},
+			},
+			Devices: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Devices.User.Devices", "models.Device"),
+			},
+			Directories: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Devices.User.Directories", "models.Directory"),
 			},
 			Files: struct {
 				field.RelationField
@@ -197,20 +209,28 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 				User struct {
 					field.RelationField
 				}
-				Device struct {
+				File struct {
+					field.RelationField
+				}
+				Directory struct {
 					field.RelationField
 				}
 			}{
-				RelationField: field.NewRelation("Devices.User.Events", "models.SyncEvent"),
+				RelationField: field.NewRelation("Devices.User.Events", "models.Event"),
 				User: struct {
 					field.RelationField
 				}{
 					RelationField: field.NewRelation("Devices.User.Events.User", "models.User"),
 				},
-				Device: struct {
+				File: struct {
 					field.RelationField
 				}{
-					RelationField: field.NewRelation("Devices.User.Events.Device", "models.Device"),
+					RelationField: field.NewRelation("Devices.User.Events.File", "models.File"),
+				},
+				Directory: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Devices.User.Events.Directory", "models.Directory"),
 				},
 			},
 		},
@@ -231,7 +251,13 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	_user.Events = userHasManyEvents{
 		db: db.Session(&gorm.Session{}),
 
-		RelationField: field.NewRelation("Events", "models.SyncEvent"),
+		RelationField: field.NewRelation("Events", "models.Event"),
+	}
+
+	_user.RootDirectory = userBelongsToRootDirectory{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("RootDirectory", "models.Directory"),
 	}
 
 	_user.fillFieldMap()
@@ -242,21 +268,24 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 type user struct {
 	userDo userDo
 
-	ALL          field.Asterisk
-	ID           field.Field
-	Name         field.String
-	Email        field.String
-	PasswordHash field.String
-	Role         field.String
-	CreatedAt    field.Time
-	UpdatedAt    field.Time
-	Devices      userHasManyDevices
+	ALL             field.Asterisk
+	ID              field.Field
+	Name            field.String
+	Email           field.String
+	PasswordHash    field.String
+	Role            field.String
+	RootDirectoryID field.Field
+	CreatedAt       field.Time
+	UpdatedAt       field.Time
+	Devices         userHasManyDevices
 
 	Directories userHasManyDirectories
 
 	Files userHasManyFiles
 
 	Events userHasManyEvents
+
+	RootDirectory userBelongsToRootDirectory
 
 	fieldMap map[string]field.Expr
 }
@@ -278,6 +307,7 @@ func (u *user) updateTableName(table string) *user {
 	u.Email = field.NewString(table, "email")
 	u.PasswordHash = field.NewString(table, "password_hash")
 	u.Role = field.NewString(table, "role")
+	u.RootDirectoryID = field.NewField(table, "root_directory_id")
 	u.CreatedAt = field.NewTime(table, "created_at")
 	u.UpdatedAt = field.NewTime(table, "updated_at")
 
@@ -304,12 +334,13 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *user) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 11)
+	u.fieldMap = make(map[string]field.Expr, 13)
 	u.fieldMap["id"] = u.ID
 	u.fieldMap["name"] = u.Name
 	u.fieldMap["email"] = u.Email
 	u.fieldMap["password_hash"] = u.PasswordHash
 	u.fieldMap["role"] = u.Role
+	u.fieldMap["root_directory_id"] = u.RootDirectoryID
 	u.fieldMap["created_at"] = u.CreatedAt
 	u.fieldMap["updated_at"] = u.UpdatedAt
 
@@ -332,10 +363,7 @@ type userHasManyDevices struct {
 
 	User struct {
 		field.RelationField
-		Devices struct {
-			field.RelationField
-		}
-		Directories struct {
+		RootDirectory struct {
 			field.RelationField
 			User struct {
 				field.RelationField
@@ -365,6 +393,12 @@ type userHasManyDevices struct {
 				}
 			}
 		}
+		Devices struct {
+			field.RelationField
+		}
+		Directories struct {
+			field.RelationField
+		}
 		Files struct {
 			field.RelationField
 		}
@@ -373,7 +407,10 @@ type userHasManyDevices struct {
 			User struct {
 				field.RelationField
 			}
-			Device struct {
+			File struct {
+				field.RelationField
+			}
+			Directory struct {
 				field.RelationField
 			}
 		}
@@ -622,11 +659,11 @@ func (a userHasManyEvents) Model(m *models.User) *userHasManyEventsTx {
 
 type userHasManyEventsTx struct{ tx *gorm.Association }
 
-func (a userHasManyEventsTx) Find() (result []*models.SyncEvent, err error) {
+func (a userHasManyEventsTx) Find() (result []*models.Event, err error) {
 	return result, a.tx.Find(&result)
 }
 
-func (a userHasManyEventsTx) Append(values ...*models.SyncEvent) (err error) {
+func (a userHasManyEventsTx) Append(values ...*models.Event) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -634,7 +671,7 @@ func (a userHasManyEventsTx) Append(values ...*models.SyncEvent) (err error) {
 	return a.tx.Append(targetValues...)
 }
 
-func (a userHasManyEventsTx) Replace(values ...*models.SyncEvent) (err error) {
+func (a userHasManyEventsTx) Replace(values ...*models.Event) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -642,7 +679,7 @@ func (a userHasManyEventsTx) Replace(values ...*models.SyncEvent) (err error) {
 	return a.tx.Replace(targetValues...)
 }
 
-func (a userHasManyEventsTx) Delete(values ...*models.SyncEvent) (err error) {
+func (a userHasManyEventsTx) Delete(values ...*models.Event) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -655,6 +692,77 @@ func (a userHasManyEventsTx) Clear() error {
 }
 
 func (a userHasManyEventsTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type userBelongsToRootDirectory struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a userBelongsToRootDirectory) Where(conds ...field.Expr) *userBelongsToRootDirectory {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a userBelongsToRootDirectory) WithContext(ctx context.Context) *userBelongsToRootDirectory {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a userBelongsToRootDirectory) Session(session *gorm.Session) *userBelongsToRootDirectory {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a userBelongsToRootDirectory) Model(m *models.User) *userBelongsToRootDirectoryTx {
+	return &userBelongsToRootDirectoryTx{a.db.Model(m).Association(a.Name())}
+}
+
+type userBelongsToRootDirectoryTx struct{ tx *gorm.Association }
+
+func (a userBelongsToRootDirectoryTx) Find() (result *models.Directory, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a userBelongsToRootDirectoryTx) Append(values ...*models.Directory) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a userBelongsToRootDirectoryTx) Replace(values ...*models.Directory) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a userBelongsToRootDirectoryTx) Delete(values ...*models.Directory) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a userBelongsToRootDirectoryTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a userBelongsToRootDirectoryTx) Count() int64 {
 	return a.tx.Count()
 }
 

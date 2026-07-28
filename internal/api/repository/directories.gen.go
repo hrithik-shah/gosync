@@ -41,6 +41,9 @@ func newDirectory(db *gorm.DB, opts ...gen.DOOption) directory {
 		RelationField: field.NewRelation("Children", "models.Directory"),
 		User: struct {
 			field.RelationField
+			RootDirectory struct {
+				field.RelationField
+			}
 			Devices struct {
 				field.RelationField
 				User struct {
@@ -73,12 +76,20 @@ func newDirectory(db *gorm.DB, opts ...gen.DOOption) directory {
 				User struct {
 					field.RelationField
 				}
-				Device struct {
+				File struct {
+					field.RelationField
+				}
+				Directory struct {
 					field.RelationField
 				}
 			}
 		}{
 			RelationField: field.NewRelation("Children.User", "models.User"),
+			RootDirectory: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Children.User.RootDirectory", "models.Directory"),
+			},
 			Devices: struct {
 				field.RelationField
 				User struct {
@@ -150,20 +161,28 @@ func newDirectory(db *gorm.DB, opts ...gen.DOOption) directory {
 				User struct {
 					field.RelationField
 				}
-				Device struct {
+				File struct {
+					field.RelationField
+				}
+				Directory struct {
 					field.RelationField
 				}
 			}{
-				RelationField: field.NewRelation("Children.User.Events", "models.SyncEvent"),
+				RelationField: field.NewRelation("Children.User.Events", "models.Event"),
 				User: struct {
 					field.RelationField
 				}{
 					RelationField: field.NewRelation("Children.User.Events.User", "models.User"),
 				},
-				Device: struct {
+				File: struct {
 					field.RelationField
 				}{
-					RelationField: field.NewRelation("Children.User.Events.Device", "models.Device"),
+					RelationField: field.NewRelation("Children.User.Events.File", "models.File"),
+				},
+				Directory: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Children.User.Events.Directory", "models.Directory"),
 				},
 			},
 		},
@@ -305,6 +324,9 @@ type directoryHasManyChildren struct {
 
 	User struct {
 		field.RelationField
+		RootDirectory struct {
+			field.RelationField
+		}
 		Devices struct {
 			field.RelationField
 			User struct {
@@ -337,7 +359,10 @@ type directoryHasManyChildren struct {
 			User struct {
 				field.RelationField
 			}
-			Device struct {
+			File struct {
+				field.RelationField
+			}
+			Directory struct {
 				field.RelationField
 			}
 		}

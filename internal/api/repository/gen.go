@@ -19,10 +19,10 @@ var (
 	Q            = new(Query)
 	Device       *device
 	Directory    *directory
+	Event        *event
 	File         *file
 	FileVersion  *fileVersion
 	RefreshToken *refreshToken
-	SyncEvent    *syncEvent
 	User         *user
 )
 
@@ -30,10 +30,10 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
 	Device = &Q.Device
 	Directory = &Q.Directory
+	Event = &Q.Event
 	File = &Q.File
 	FileVersion = &Q.FileVersion
 	RefreshToken = &Q.RefreshToken
-	SyncEvent = &Q.SyncEvent
 	User = &Q.User
 }
 
@@ -42,10 +42,10 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		db:           db,
 		Device:       newDevice(db, opts...),
 		Directory:    newDirectory(db, opts...),
+		Event:        newEvent(db, opts...),
 		File:         newFile(db, opts...),
 		FileVersion:  newFileVersion(db, opts...),
 		RefreshToken: newRefreshToken(db, opts...),
-		SyncEvent:    newSyncEvent(db, opts...),
 		User:         newUser(db, opts...),
 	}
 }
@@ -55,10 +55,10 @@ type Query struct {
 
 	Device       device
 	Directory    directory
+	Event        event
 	File         file
 	FileVersion  fileVersion
 	RefreshToken refreshToken
-	SyncEvent    syncEvent
 	User         user
 }
 
@@ -69,10 +69,10 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		db:           db,
 		Device:       q.Device.clone(db),
 		Directory:    q.Directory.clone(db),
+		Event:        q.Event.clone(db),
 		File:         q.File.clone(db),
 		FileVersion:  q.FileVersion.clone(db),
 		RefreshToken: q.RefreshToken.clone(db),
-		SyncEvent:    q.SyncEvent.clone(db),
 		User:         q.User.clone(db),
 	}
 }
@@ -90,10 +90,10 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		db:           db,
 		Device:       q.Device.replaceDB(db),
 		Directory:    q.Directory.replaceDB(db),
+		Event:        q.Event.replaceDB(db),
 		File:         q.File.replaceDB(db),
 		FileVersion:  q.FileVersion.replaceDB(db),
 		RefreshToken: q.RefreshToken.replaceDB(db),
-		SyncEvent:    q.SyncEvent.replaceDB(db),
 		User:         q.User.replaceDB(db),
 	}
 }
@@ -101,10 +101,10 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 type queryCtx struct {
 	Device       IDeviceDo
 	Directory    IDirectoryDo
+	Event        IEventDo
 	File         IFileDo
 	FileVersion  IFileVersionDo
 	RefreshToken IRefreshTokenDo
-	SyncEvent    ISyncEventDo
 	User         IUserDo
 }
 
@@ -112,10 +112,10 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
 		Device:       q.Device.WithContext(ctx),
 		Directory:    q.Directory.WithContext(ctx),
+		Event:        q.Event.WithContext(ctx),
 		File:         q.File.WithContext(ctx),
 		FileVersion:  q.FileVersion.WithContext(ctx),
 		RefreshToken: q.RefreshToken.WithContext(ctx),
-		SyncEvent:    q.SyncEvent.WithContext(ctx),
 		User:         q.User.WithContext(ctx),
 	}
 }

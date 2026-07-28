@@ -44,13 +44,7 @@ func newFile(db *gorm.DB, opts ...gen.DOOption) file {
 			field.RelationField
 			User struct {
 				field.RelationField
-				Devices struct {
-					field.RelationField
-					User struct {
-						field.RelationField
-					}
-				}
-				Directories struct {
+				RootDirectory struct {
 					field.RelationField
 					User struct {
 						field.RelationField
@@ -65,6 +59,15 @@ func newFile(db *gorm.DB, opts ...gen.DOOption) file {
 						field.RelationField
 					}
 				}
+				Devices struct {
+					field.RelationField
+					User struct {
+						field.RelationField
+					}
+				}
+				Directories struct {
+					field.RelationField
+				}
 				Files struct {
 					field.RelationField
 				}
@@ -73,7 +76,10 @@ func newFile(db *gorm.DB, opts ...gen.DOOption) file {
 					User struct {
 						field.RelationField
 					}
-					Device struct {
+					File struct {
+						field.RelationField
+					}
+					Directory struct {
 						field.RelationField
 					}
 				}
@@ -91,13 +97,7 @@ func newFile(db *gorm.DB, opts ...gen.DOOption) file {
 			RelationField: field.NewRelation("Versions.File", "models.File"),
 			User: struct {
 				field.RelationField
-				Devices struct {
-					field.RelationField
-					User struct {
-						field.RelationField
-					}
-				}
-				Directories struct {
+				RootDirectory struct {
 					field.RelationField
 					User struct {
 						field.RelationField
@@ -112,6 +112,15 @@ func newFile(db *gorm.DB, opts ...gen.DOOption) file {
 						field.RelationField
 					}
 				}
+				Devices struct {
+					field.RelationField
+					User struct {
+						field.RelationField
+					}
+				}
+				Directories struct {
+					field.RelationField
+				}
 				Files struct {
 					field.RelationField
 				}
@@ -120,12 +129,52 @@ func newFile(db *gorm.DB, opts ...gen.DOOption) file {
 					User struct {
 						field.RelationField
 					}
-					Device struct {
+					File struct {
+						field.RelationField
+					}
+					Directory struct {
 						field.RelationField
 					}
 				}
 			}{
 				RelationField: field.NewRelation("Versions.File.User", "models.User"),
+				RootDirectory: struct {
+					field.RelationField
+					User struct {
+						field.RelationField
+					}
+					Parent struct {
+						field.RelationField
+					}
+					Children struct {
+						field.RelationField
+					}
+					Files struct {
+						field.RelationField
+					}
+				}{
+					RelationField: field.NewRelation("Versions.File.User.RootDirectory", "models.Directory"),
+					User: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Versions.File.User.RootDirectory.User", "models.User"),
+					},
+					Parent: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Versions.File.User.RootDirectory.Parent", "models.Directory"),
+					},
+					Children: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Versions.File.User.RootDirectory.Children", "models.Directory"),
+					},
+					Files: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Versions.File.User.RootDirectory.Files", "models.File"),
+					},
+				},
 				Devices: struct {
 					field.RelationField
 					User struct {
@@ -141,40 +190,8 @@ func newFile(db *gorm.DB, opts ...gen.DOOption) file {
 				},
 				Directories: struct {
 					field.RelationField
-					User struct {
-						field.RelationField
-					}
-					Parent struct {
-						field.RelationField
-					}
-					Children struct {
-						field.RelationField
-					}
-					Files struct {
-						field.RelationField
-					}
 				}{
 					RelationField: field.NewRelation("Versions.File.User.Directories", "models.Directory"),
-					User: struct {
-						field.RelationField
-					}{
-						RelationField: field.NewRelation("Versions.File.User.Directories.User", "models.User"),
-					},
-					Parent: struct {
-						field.RelationField
-					}{
-						RelationField: field.NewRelation("Versions.File.User.Directories.Parent", "models.Directory"),
-					},
-					Children: struct {
-						field.RelationField
-					}{
-						RelationField: field.NewRelation("Versions.File.User.Directories.Children", "models.Directory"),
-					},
-					Files: struct {
-						field.RelationField
-					}{
-						RelationField: field.NewRelation("Versions.File.User.Directories.Files", "models.File"),
-					},
 				},
 				Files: struct {
 					field.RelationField
@@ -186,20 +203,28 @@ func newFile(db *gorm.DB, opts ...gen.DOOption) file {
 					User struct {
 						field.RelationField
 					}
-					Device struct {
+					File struct {
+						field.RelationField
+					}
+					Directory struct {
 						field.RelationField
 					}
 				}{
-					RelationField: field.NewRelation("Versions.File.User.Events", "models.SyncEvent"),
+					RelationField: field.NewRelation("Versions.File.User.Events", "models.Event"),
 					User: struct {
 						field.RelationField
 					}{
 						RelationField: field.NewRelation("Versions.File.User.Events.User", "models.User"),
 					},
-					Device: struct {
+					File: struct {
 						field.RelationField
 					}{
-						RelationField: field.NewRelation("Versions.File.User.Events.Device", "models.Device"),
+						RelationField: field.NewRelation("Versions.File.User.Events.File", "models.File"),
+					},
+					Directory: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Versions.File.User.Events.Directory", "models.Directory"),
 					},
 				},
 			},
@@ -345,13 +370,7 @@ type fileHasManyVersions struct {
 		field.RelationField
 		User struct {
 			field.RelationField
-			Devices struct {
-				field.RelationField
-				User struct {
-					field.RelationField
-				}
-			}
-			Directories struct {
+			RootDirectory struct {
 				field.RelationField
 				User struct {
 					field.RelationField
@@ -366,6 +385,15 @@ type fileHasManyVersions struct {
 					field.RelationField
 				}
 			}
+			Devices struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+				}
+			}
+			Directories struct {
+				field.RelationField
+			}
 			Files struct {
 				field.RelationField
 			}
@@ -374,7 +402,10 @@ type fileHasManyVersions struct {
 				User struct {
 					field.RelationField
 				}
-				Device struct {
+				File struct {
+					field.RelationField
+				}
+				Directory struct {
 					field.RelationField
 				}
 			}
