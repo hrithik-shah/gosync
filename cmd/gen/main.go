@@ -37,7 +37,7 @@ func main() {
 		models.Directory{},
 		models.File{},
 		models.FileVersion{},
-		models.SyncEvent{},
+		models.Event{},
 		models.RefreshToken{},
 	)
 

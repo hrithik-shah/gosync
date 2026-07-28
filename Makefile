@@ -4,7 +4,7 @@ swag:
 	swagger generate markdown -f ./docs/swagger.yaml --output=./docs/api_docs.md
 
 migrate:
-	go run ./cmd/server migrate
+	go run ./cmd/migrate
 
 gen:
 	go run ./cmd/gen
