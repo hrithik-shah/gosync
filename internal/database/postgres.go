@@ -12,7 +12,7 @@ import (
 
 var globalDB *gorm.DB
 
-func Connect() error {
+func Connect() (*gorm.DB, error) {
 	cfg := config.Get()
 
 	dsn := fmt.Sprintf(
@@ -22,11 +22,11 @@ func Connect() error {
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return fmt.Errorf("connecting to database: %w", err)
+		return nil, fmt.Errorf("connecting to database: %w", err)
 	}
 	globalDB = db
 
-	return nil
+	return db, nil
 }
 
 func Migrate() error {
