@@ -6,6 +6,7 @@ type FileInfo struct {
 	ID          string `json:"id" validate:"required,uuid"`
 	Name        string `json:"name" validate:"required,min=1"`
 	DirectoryID string `json:"directory_id" validate:"required,uuid"`
+	Hash        string `json:"hash" validate:"required,len=256"`
 }
 
 type UpdateFileRequest struct {
@@ -17,7 +18,7 @@ type MoveFileRequest struct {
 }
 
 func FromFileDTO(file dto.FileDTO) FileInfo {
-	return FileInfo{ID: file.ID, Name: file.Name, DirectoryID: file.DirectoryID}
+	return FileInfo{ID: file.ID, Name: file.Name, DirectoryID: file.DirectoryID, Hash: file.Hash}
 }
 
 func FromFileDTOSlice(files []dto.FileDTO) []FileInfo {
