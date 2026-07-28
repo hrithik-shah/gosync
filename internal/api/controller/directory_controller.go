@@ -49,6 +49,34 @@ func (c *DirectoryController) Create(w http.ResponseWriter, r *http.Request) err
 	return json.NewEncoder(w).Encode(payload.CreateDirectoryResponse{DirectoryID: dirID.String()})
 }
 
+// GetRootMetadata godoc
+// @Description  Gets metadata for the root directory
+// @Summary      Get root directory metadata
+// @Tags         directories
+// @Success      200  {object} 	payload.GetMetadataResponse
+// @Failure      400  {object}  map[string]string
+// @Failure      404  {object}  map[string]string
+// @Security     BearerAuth
+// @Router       /directories/root [get]
+func (c *DirectoryController) GetRootMetadata(w http.ResponseWriter, r *http.Request) error {
+	userID, ok := middleware.UserIDFromContext(r)
+	if !ok {
+		return apperror.Unauthorized("not authenticated")
+	}
+
+	directoryDTO, err := c.directoryService.GetRootMetadata(userID)
+	if err != nil {
+		return err
+	}
+
+	return json.NewEncoder(w).Encode(payload.GetMetadataResponse{
+		ID:                directoryDTO.ID,
+		Name:              directoryDTO.Name,
+		ParentDirectoryID: directoryDTO.ParentDirectoryID,
+		Hash:              directoryDTO.Hash,
+	})
+}
+
 // GetMetadata godoc
 // @Description  Gets metadata for a directory
 // @Summary      Get directory metadata
@@ -70,15 +98,16 @@ func (c *DirectoryController) GetMetadata(w http.ResponseWriter, r *http.Request
 		return err
 	}
 
-	dirID, name, parentDirectoryID, err := c.directoryService.GetMetadata(userID, dirID)
+	directoryDTO, err := c.directoryService.GetMetadata(userID, dirID)
 	if err != nil {
 		return err
 	}
 
 	return json.NewEncoder(w).Encode(payload.GetMetadataResponse{
-		ID:                dirID.String(),
-		Name:              name,
-		ParentDirectoryID: parentDirectoryID.String(),
+		ID:                directoryDTO.ID,
+		Name:              directoryDTO.Name,
+		ParentDirectoryID: directoryDTO.ParentDirectoryID,
+		Hash:              directoryDTO.Hash,
 	})
 }
 

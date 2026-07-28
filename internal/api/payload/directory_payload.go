@@ -4,6 +4,7 @@ type DirectoryInfo struct {
 	ID                string `json:"id" validate:"required,uuid"`
 	Name              string `json:"name" validate:"required,min=1"`
 	ParentDirectoryID string `json:"parent_directory_id" validate:"required,uuid"`
+	Hash              string `json:"hash" validate:"required"`
 }
 
 type CreateDirectoryRequest struct {

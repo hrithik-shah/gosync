@@ -4,4 +4,5 @@ type DirectoryDTO struct {
 	ID                string
 	Name              string
 	ParentDirectoryID string
+	Hash              string
 }
