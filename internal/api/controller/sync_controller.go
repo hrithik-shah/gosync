@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"gosync/internal/api/apperror"
 	"gosync/internal/api/middleware"
 	"gosync/internal/api/payload"
 	"gosync/internal/api/utils/httputil"
@@ -28,10 +27,7 @@ func NewSyncController() *SyncController {
 // @Security     BearerAuth
 // @Router       /sync [post]
 func (c *SyncController) DetermineSyncActions(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	var req payload.DetermineSyncActionsRequest
 	if err := httputil.DecodeAndValidate(r, &req); err != nil {
@@ -59,10 +55,7 @@ func (c *SyncController) DetermineSyncActions(w http.ResponseWriter, r *http.Req
 // @Security     BearerAuth
 // @Router       /sync/events [get]
 func (c *SyncController) GetEvents(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	cursor, limit, err := httputil.ParsePagination(r)
 	if err != nil {

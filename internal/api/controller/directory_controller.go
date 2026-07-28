@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"gosync/internal/api/apperror"
 	"gosync/internal/api/middleware"
 	"gosync/internal/api/payload"
 	"gosync/internal/api/service"
@@ -30,10 +29,7 @@ func NewDirectoryController() *DirectoryController {
 // @Security     BearerAuth
 // @Router       /directories [post]
 func (c *DirectoryController) Create(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	var req payload.CreateDirectoryRequest
 	if err := httputil.DecodeAndValidate(r, &req); err != nil {
@@ -59,10 +55,7 @@ func (c *DirectoryController) Create(w http.ResponseWriter, r *http.Request) err
 // @Security     BearerAuth
 // @Router       /directories/root [get]
 func (c *DirectoryController) GetRootMetadata(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	directoryDTO, err := c.directoryService.GetRootMetadata(userID)
 	if err != nil {
@@ -88,10 +81,7 @@ func (c *DirectoryController) GetRootMetadata(w http.ResponseWriter, r *http.Req
 // @Security     BearerAuth
 // @Router       /directories/{id} [get]
 func (c *DirectoryController) GetMetadata(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	dirID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
@@ -122,10 +112,7 @@ func (c *DirectoryController) GetMetadata(w http.ResponseWriter, r *http.Request
 // @Security     BearerAuth
 // @Router       /directories/{id}/list [get]
 func (c *DirectoryController) ListContents(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	dirID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
@@ -157,10 +144,7 @@ func (c *DirectoryController) ListContents(w http.ResponseWriter, r *http.Reques
 // @Security     BearerAuth
 // @Router       /directories/{id} [patch]
 func (c *DirectoryController) Update(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	dirID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
@@ -194,10 +178,7 @@ func (c *DirectoryController) Update(w http.ResponseWriter, r *http.Request) err
 // @Security     BearerAuth
 // @Router       /directories/{id}/move [post]
 func (c *DirectoryController) Move(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	dirID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
@@ -229,10 +210,7 @@ func (c *DirectoryController) Move(w http.ResponseWriter, r *http.Request) error
 // @Security     BearerAuth
 // @Router       /directories/{id} [delete]
 func (c *DirectoryController) Delete(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	dirID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {

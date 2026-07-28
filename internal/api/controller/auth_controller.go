@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"gosync/internal/api/apperror"
 	"gosync/internal/api/middleware"
 	"gosync/internal/api/payload"
 	"gosync/internal/api/service"
@@ -110,10 +109,7 @@ func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) error {
 // @Security     BearerAuth
 // @Router       /auth/logout [post]
 func (c *AuthController) Logout(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	if err := c.authService.Logout(userID); err != nil {
 		return err

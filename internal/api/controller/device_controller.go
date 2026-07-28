@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"gosync/internal/api/apperror"
 	"gosync/internal/api/middleware"
 	"gosync/internal/api/payload"
 	"gosync/internal/api/service"
@@ -31,10 +30,7 @@ func NewDeviceController() *DeviceController {
 // @Failure      409   {object}  map[string]string
 // @Router       /devices [post]
 func (c *DeviceController) Create(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	var req payload.CreateDeviceRequest
 	if err := httputil.DecodeAndValidate(r, &req); err != nil {
@@ -60,10 +56,7 @@ func (c *DeviceController) Create(w http.ResponseWriter, r *http.Request) error 
 // @Failure      401   {object}  map[string]string
 // @Router       /devices [get]
 func (c *DeviceController) List(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	var req payload.LoginRequest
 	if err := httputil.DecodeAndValidate(r, &req); err != nil {
@@ -91,10 +84,7 @@ func (c *DeviceController) List(w http.ResponseWriter, r *http.Request) error {
 // @Failure      401   {object}  map[string]string
 // @Router       /devices/{id} [get]
 func (c *DeviceController) Get(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	deviceID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
