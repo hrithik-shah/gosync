@@ -39,7 +39,7 @@ type GetEventsResponse struct {
 	Count  int             `json:"count" validate:"required"`
 }
 
-func FromSyncEventDTO(eventDTO dto.SyncEventDTO) SyncEventInfo {
+func FromEventDTO(eventDTO dto.EventDTO) SyncEventInfo {
 	return SyncEventInfo{
 		ID:          eventDTO.ID,
 		Type:        string(eventDTO.Type),
@@ -48,10 +48,10 @@ func FromSyncEventDTO(eventDTO dto.SyncEventDTO) SyncEventInfo {
 	}
 }
 
-func FromSyncEventDTOSlice(eventDTOs []dto.SyncEventDTO) []SyncEventInfo {
+func FromEventDTOSlice(eventDTOs []dto.EventDTO) []SyncEventInfo {
 	events := make([]SyncEventInfo, len(eventDTOs))
 	for i, eventDTO := range eventDTOs {
-		events[i] = FromSyncEventDTO(eventDTO)
+		events[i] = FromEventDTO(eventDTO)
 	}
 	return events
 }

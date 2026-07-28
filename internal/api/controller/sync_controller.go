@@ -76,7 +76,7 @@ func (c *SyncController) GetEvents(w http.ResponseWriter, r *http.Request) error
 
 	w.WriteHeader(http.StatusOK)
 	return json.NewEncoder(w).Encode(payload.GetEventsResponse{
-		Events: payload.FromSyncEventDTOSlice(events),
+		Events: payload.FromEventDTOSlice(events),
 		Count:  count,
 	})
 }
