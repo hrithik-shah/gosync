@@ -18,7 +18,11 @@ type RefreshToken struct {
 	ExpiresAt time.Time  `gorm:"not null"`
 	RevokedAt *time.Time // set on logout/rotation; nil means still valid
 
-	CreatedAt time.Time
+	CreatedAt time.Time `gorm:"autoCreateTime;not null"`
 
-	User User `gorm:"foreignKey:UserID"`
+	User User `gorm:"foreignKey:UserID;constraint:fk_refresh_tokens_user,deferrable:initially deferred"`
+}
+
+func (RefreshToken) ForeignKeys() []string {
+	return []string{"User"}
 }

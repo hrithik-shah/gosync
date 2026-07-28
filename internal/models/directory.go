@@ -20,15 +20,19 @@ type Directory struct {
 	// Hash of children
 	MerkleHash string
 
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt time.Time `gorm:"autoCreateTime;not null"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime;not null"`
 
 	DeletedAt *time.Time
 
-	User User `gorm:"foreignKey:UserID"`
+	User User `gorm:"foreignKey:UserID;constraint:fk_directories_user,deferrable:initially deferred"`
 
-	Parent   *Directory  `gorm:"foreignKey:ParentID"`
+	Parent   *Directory  `gorm:"foreignKey:ParentID;constraint:fk_directories_parent,deferrable:initially deferred"`
 	Children []Directory `gorm:"foreignKey:ParentID"`
 
 	Files []File
+}
+
+func (Directory) ForeignKeys() []string {
+	return []string{"User", "Parent"}
 }

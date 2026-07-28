@@ -13,15 +13,19 @@ type User struct {
 	PasswordHash string    `gorm:"not null"`
 	Role         string    `gorm:"not null;default:'USER'"`
 
-	rootDirectoryID uuid.UUID `gorm:"type:uuid;not null"`
+	RootDirectoryID uuid.UUID `gorm:"type:uuid;not null"`
 
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt time.Time `gorm:"autoCreateTime;not null"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime;not null"`
 
-	rootDirectory *Directory `gorm:"foreignKey:rootDirectoryID"`
+	RootDirectory *Directory `gorm:"foreignKey:RootDirectoryID;constraint:fk_users_root_directory,deferrable:initially deferred"`
 
 	Devices     []Device
 	Directories []Directory
 	Files       []File
-	Events      []SyncEvent
+	Events      []Event
+}
+
+func (User) ForeignKeys() []string {
+	return []string{"RootDirectory"}
 }
