@@ -45,7 +45,7 @@ func RequireAuth(next http.Handler) http.Handler {
 }
 
 // UserIDFromContext retrieves the authenticated user's ID, set by RequireAuth.
-func UserIDFromContext(r *http.Request) (uuid.UUID, bool) {
+func userIDFromContext(r *http.Request) (uuid.UUID, bool) {
 	id, ok := r.Context().Value(userIDCtxKey).(uuid.UUID)
 	return id, ok
 }
@@ -53,7 +53,7 @@ func UserIDFromContext(r *http.Request) (uuid.UUID, bool) {
 // MustUserID retrieves the authenticated user's ID, panicking if called
 // on a request that wasn't processed by RequireAuth.
 func MustUserID(r *http.Request) uuid.UUID {
-	id, ok := UserIDFromContext(r)
+	id, ok := userIDFromContext(r)
 	if !ok {
 		panic("MustUserID called on a request with no authenticated user")
 	}
