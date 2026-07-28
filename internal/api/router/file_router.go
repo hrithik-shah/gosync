@@ -1,6 +1,6 @@
 package router
 
-import "gosync/internal/controller"
+import "gosync/internal/api/controller"
 
 func FileRoutes(r *AppRouter, fileCtrl *controller.FileController) {
 	r.Post("/", fileCtrl.Upload)
