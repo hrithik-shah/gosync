@@ -5,7 +5,11 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/google/uuid"
+
 	"gosync/internal/api/apperror"
+	"gosync/internal/api/utils/jwtutil"
+	"gosync/internal/config"
 )
 
 type ctxKey int
@@ -41,14 +45,24 @@ func RequireAuth(next http.Handler) http.Handler {
 }
 
 // UserIDFromContext retrieves the authenticated user's ID, set by RequireAuth.
-func UserIDFromContext(r *http.Request) (string, bool) {
-	id, ok := r.Context().Value(userIDCtxKey).(string)
+func UserIDFromContext(r *http.Request) (uuid.UUID, bool) {
+	id, ok := r.Context().Value(userIDCtxKey).(uuid.UUID)
 	return id, ok
+}
+
+// MustUserID retrieves the authenticated user's ID, panicking if called
+// on a request that wasn't processed by RequireAuth.
+func MustUserID(r *http.Request) uuid.UUID {
+	id, ok := UserIDFromContext(r)
+	if !ok {
+		panic("MustUserID called on a request with no authenticated user")
+	}
+	return id
 }
 
 // validateToken is a placeholder — replace with real JWT parsing/verification
 // or a session store lookup.
-func validateToken(token string) (userID string, err error) {
-	// TODO: parse/verify JWT, or look up session
-	return "", apperror.Unauthorized("token validation not implemented")
+func validateToken(token string) (userID uuid.UUID, err error) {
+	cfg := config.Get()
+	return jwtutil.Decode(token, cfg.JWTSecret())
 }
