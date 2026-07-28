@@ -10,7 +10,9 @@ import (
 	"gosync/internal/models"
 )
 
-func Connect() (*gorm.DB, error) {
+var globalDB *gorm.DB
+
+func Connect() error {
 	cfg := config.Get()
 
 	dsn := fmt.Sprintf(
@@ -20,13 +22,19 @@ func Connect() (*gorm.DB, error) {
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return nil, fmt.Errorf("connecting to database: %w", err)
+		return fmt.Errorf("connecting to database: %w", err)
 	}
+	globalDB = db
 
-	return db, nil
+	return nil
 }
 
-func Migrate(db *gorm.DB) error {
+func Migrate() error {
+	db, err := GetDB()
+	if err != nil {
+		return err
+	}
+
 	return db.AutoMigrate(
 		&models.User{},
 		&models.Device{},
@@ -36,4 +44,11 @@ func Migrate(db *gorm.DB) error {
 		&models.SyncEvent{},
 		&models.RefreshToken{},
 	)
+}
+
+func GetDB() (*gorm.DB, error) {
+	if globalDB == nil {
+		return nil, fmt.Errorf("database not connected")
+	}
+	return globalDB, nil
 }

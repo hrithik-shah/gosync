@@ -5,7 +5,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chimw "github.com/go-chi/chi/v5/middleware"
-	"gorm.io/gorm"
 
 	_ "gosync/docs" // generated docs package — blank import registers the spec
 
@@ -42,7 +41,7 @@ func (ar *AppRouter) Route(pattern string, fn func(sub *AppRouter)) {
 	})
 }
 
-func New(db *gorm.DB) http.Handler {
+func New() http.Handler {
 	baseRouter := chi.NewRouter()
 	baseRouter.Use(chimw.Logger)
 	baseRouter.Use(chimw.Recoverer)

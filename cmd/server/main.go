@@ -8,8 +8,6 @@ import (
 	"gosync/internal/api/router"
 	"gosync/internal/config"
 	"gosync/internal/database"
-
-	"gorm.io/gorm"
 )
 
 // @title           GoSync API
@@ -31,16 +29,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db, err := database.Connect()
+	err = database.Connect()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	switch cmd {
 	case "start":
-		startServer(db)
+		startServer()
 	case "migrate":
-		if err := database.Migrate(db); err != nil {
+		if err := database.Migrate(); err != nil {
 			log.Fatalf("migration failed: %v", err)
 		}
 		log.Println("migrations applied")
@@ -49,8 +47,8 @@ func main() {
 	}
 }
 
-func startServer(db *gorm.DB) {
-	r := router.New(db)
+func startServer() {
+	r := router.New()
 
 	log.Println("starting server on :8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {
