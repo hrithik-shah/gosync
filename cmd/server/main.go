@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"gosync/internal/api/repository"
 	"gosync/internal/api/router"
 	"gosync/internal/config"
 	"gosync/internal/database"
@@ -24,15 +25,20 @@ func main() {
 		cmd = os.Args[1]
 	}
 
+	// Load configuration and environment variables
 	err := config.Load()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = database.Connect()
+	// Connect to the database
+	db, err := database.Connect()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Set the default database connection for the repository package
+	repository.SetDefault(db)
 
 	switch cmd {
 	case "start":
