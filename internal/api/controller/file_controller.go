@@ -38,16 +38,13 @@ func NewFileController() *FileController {
 // @Security     BearerAuth
 // @Router       /files [post]
 func (c *FileController) Upload(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	if err := r.ParseMultipartForm(config.MaxFileMemory); err != nil {
 		return apperror.BadRequest("invalid multipart form")
 	}
 
-	directoryID, err := uuid.Parse(r.FormValue("directory_id"))
+	directoryID, err := httputil.ParseUUIDParam(r, "directory_id")
 	if err != nil {
 		return apperror.BadRequest("invalid or missing directory_id")
 	}
@@ -58,13 +55,13 @@ func (c *FileController) Upload(w http.ResponseWriter, r *http.Request) error {
 	}
 	defer f.Close()
 
-	err = c.fileService.Upload(userID, directoryID, header.Filename, f)
+	fileDTO, err := c.fileService.Upload(r.Context(), userID, directoryID, header.Filename, f)
 	if err != nil {
 		return err
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	return nil
+	return json.NewEncoder(w).Encode(payload.FromFileDTO(fileDTO))
 }
 
 // GetMetadata godoc
@@ -79,10 +76,7 @@ func (c *FileController) Upload(w http.ResponseWriter, r *http.Request) error {
 // @Security     BearerAuth
 // @Router       /files/{id} [get]
 func (c *FileController) GetMetadata(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
@@ -111,10 +105,7 @@ func (c *FileController) GetMetadata(w http.ResponseWriter, r *http.Request) err
 // @Security     BearerAuth
 // @Router       /files/{id} [patch]
 func (c *FileController) Update(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
@@ -147,10 +138,7 @@ func (c *FileController) Update(w http.ResponseWriter, r *http.Request) error {
 // @Security     BearerAuth
 // @Router       /files/{id}/move [post]
 func (c *FileController) Move(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
@@ -187,10 +175,7 @@ func (c *FileController) Move(w http.ResponseWriter, r *http.Request) error {
 // @Security     BearerAuth
 // @Router       /files/{id} [delete]
 func (c *FileController) Delete(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
@@ -217,10 +202,7 @@ func (c *FileController) Delete(w http.ResponseWriter, r *http.Request) error {
 // @Security     BearerAuth
 // @Router       /files/{id}/content [post]
 func (c *FileController) UploadNewFileContent(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
@@ -260,10 +242,7 @@ func (c *FileController) UploadNewFileContent(w http.ResponseWriter, r *http.Req
 // @Security     BearerAuth
 // @Router       /files/{id}/content [get]
 func (c *FileController) GetFileContent(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
@@ -294,10 +273,7 @@ func (c *FileController) GetFileContent(w http.ResponseWriter, r *http.Request) 
 // @Security     BearerAuth
 // @Router       /files/{id}/versions/{version} [get]
 func (c *FileController) GetFileVersion(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {
@@ -333,10 +309,7 @@ func (c *FileController) GetFileVersion(w http.ResponseWriter, r *http.Request) 
 // @Security     BearerAuth
 // @Router       /files/{id}/versions [get]
 func (c *FileController) ListFileVersions(w http.ResponseWriter, r *http.Request) error {
-	userID, ok := middleware.UserIDFromContext(r)
-	if !ok {
-		return apperror.Unauthorized("not authenticated")
-	}
+	userID := middleware.MustUserID(r)
 
 	fileID, err := httputil.ParseUUIDParam(r, "id")
 	if err != nil {

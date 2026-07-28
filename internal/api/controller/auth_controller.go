@@ -7,8 +7,8 @@ import (
 	"gosync/internal/api/apperror"
 	"gosync/internal/api/middleware"
 	"gosync/internal/api/payload"
+	"gosync/internal/api/service"
 	"gosync/internal/api/utils/httputil"
-	"gosync/internal/service"
 )
 
 type AuthController struct {

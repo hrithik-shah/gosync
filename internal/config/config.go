@@ -1,7 +1,7 @@
 package config
 
 import (
-	"gosync/internal/api/utils/timeutil"
+	"gosync/internal/utils/timeutil"
 	"os"
 	"time"
 
