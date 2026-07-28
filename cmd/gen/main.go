@@ -22,7 +22,7 @@ func main() {
 	}
 
 	g := gen.NewGenerator(gen.Config{
-		OutPath: "internal/repository",
+		OutPath: "internal/api/repository",
 		Mode:    gen.WithDefaultQuery | gen.WithQueryInterface,
 	})
 	g.UseDB(db)
